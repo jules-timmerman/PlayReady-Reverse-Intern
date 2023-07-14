@@ -1,0 +1,441 @@
+\documentclass[french]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper]{geometry}
+\usepackage{babel}
+
+\usepackage{hyperref}
+\usepackage{amssymb}
+
+\title{PlayReady Notes Stage}
+\author{Jules TIMMERMAN}
+\date{S2 2022-2023}
+
+
+\begin{document}
+\maketitle
+
+
+\section{Overview}
+
+\subsection{PlayReady}
+
+\begin{itemize}
+	
+	\item PlayReady est une technologie développée par Microsoft pour les DRMs
+	
+	\item Différents serveurs (non fourni par PlayReady) : 
+	\begin{itemize}
+		\item \emph{Packager} (pas fourni par PR) : Chiffre le contenu du service, génère le header associé et stocke le fichier ainsi que la paire de clés (KID pour identifier le contenu, Content Key pour déchiffrer) sur un serveur (Key Management System / Web Server).
+		
+		\item \emph{Key Management System} (idem) : stocke les paires KID / CK pour déchiffrer un contenu identifié par son KID.
+		
+	\end{itemize}
+	
+	\item Une autre solution pour le packager est d'utiliser une génération aléatoire des CK avec une seed commune au serveur et d'utiliser le KID comme entrée. Cela permet de ne stocker que la seed et de recalculer la CK à partir du KID lorsque demandé.
+	
+	\item Différents serveurs pour les applications (fourni par PlayReady) : 
+	
+	
+	\begin{itemize}
+		\item \emph{License Server} : chargé de donner des licenses aux utilisateurs c'est-à-dire les clés pour déchiffrer un contenu + les restrictions associées (par exemple, les dates limites etc...)
+		
+		\item \emph{Metering Server}
+		
+		\item \emph{Secure Stop Server}
+		
+		\item \emph{Secure Delete Server}
+		
+		\item \emph{Domain Server} : permet de grouper des appareils pour qu'ils puissent utiliser les mêmes licenses. Par exemple, permet l'embedding des licences dans le contenu, transfert de contenu d'un appareil à l'autre sans télécharger à nouveau.
+	\end{itemize}
+	
+	\item \emph{Content Decryption Module (CDM)} : Client local qui s'occupe du déchiffrement (peut le faire avec ou sans hardware etc...), du respect des policies des licences.
+	
+	\item \emph{License Store} : Stocke les licenses de manière chiffrées
+	
+	\item Souvent deux types de licences : Persistantes et Temporaires
+	
+	\item \emph{Binding} : chiffrement d'une licence avec la clé d'une entité (machine / domain / ...)
+	
+	\item \emph{License Nonce} : mis dans une demande de license pour éviter de juste renvoyer la même requête.
+	
+\end{itemize}
+
+
+\subsection{Security Levels}
+
+3 niveaux\footnote{\href{https://learn.microsoft.com/en-us/playready/overview/security-level}{Security levels}} :
+
+\begin{itemize}
+	\item 150 : développement / tests. Aucune protection
+	\item 2000 : Protection software (ou hardware)
+	\item 3000 : Protection hardware (TEE). Contenu haut qualité
+\end{itemize}
+
+
+\subsection{EME}
+
+\begin{itemize}
+	\item Spécification du Web pour les protocoles DRMs
+	\item Fournit une interface JS qui peut utiliser n'importe quel DRM
+	\item Key System : couple CDM / License Server
+	\item Fonctions appelées pour License Acquisition\footnote{\emph{Your DRM can watch you too : [...]} (Figure 1)} :
+	\begin{itemize}
+		\item \texttt{requestMediaKeySystemAccess} : Handler vers le DRM spécifié
+		\item \texttt{createMediaKeys} : Instantie le CDM (donne un objet \texttt{MediaKeys})
+		\item \texttt{createSession} : Crée une session (permet d'isoler les origines) avec un session ID. Permet aussi de spécifier temporaire ou persistant (on recharge le session ID avec \texttt{load} plus tard)
+		
+		\item \texttt{generateRequest} : crée une requête de License Acquisition. Dépend du Key System utilisé et est donc un message opaque (transférer ensuite du CDM au License Server)
+		
+		\item \texttt{update} : Transmet la réponse du LS au CDM
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{License Acquisition}
+
+\begin{itemize}
+	\item Une licence permet de déchiffrer un contenu chiffré
+	
+	\item Contenu d'une licence : 
+	\begin{itemize}
+		\item Content Key : pour déchiffrer
+		\item Rights : les droits de la licence. Par exemple : Play
+		\item Conditions / Policies : Limitation de la licence. Par exemple : EndDate (ou custom cf XMR)
+		\item Données spécifiques à l'application
+	\end{itemize}
+	
+	\item Lors d'une requête de licence, le client fourni\footnote{\href{https://learn.microsoft.com/en-us/playready/overview/license-and-policies}{License and Policies}}
+	\begin{itemize}
+		\item Client Certificate : Données sur le client, unique (mais peut changer donc ne pas utiliser pour identifier, privilégier les Platform IDs)
+		\item Content Header avec le/les KIDs
+		\item Données spécifiques à l'application
+		
+	\end{itemize}
+	
+	\item Le transfert de licences peut se faire en HTTP ou HTTPS.
+	
+	\item Le protocole est basé sur le SOAP ($\sim$ XML) et peut être customisé. 
+	
+	\item Après s'être authentifié auprès de l'Authentification Service (indépendant de PlayReady), on nous donne un Token que le client communique au License Server qui demande ensuite à l'AS si l'utilisateur est bien autorisé à accéder aux licences qu'il demande.
+\end{itemize}
+
+
+\subsection{Client Certificate}
+
+\begin{itemize}
+	\item Identifie de manière unique les clients (mais ne pas utiliser car peut changer)
+	\item Créé pendant la Client Initilization, ce qui peut arriver à l'usine, au boot, plus ou moins souvent... Par exemple, à distance : PlayReady Remote Provisioning
+	\item Transmis lors de la demande de licence
+	
+	\item Contient :
+	\begin{itemize}
+		\item Manufacturer name
+		\item Model name
+		\item Security Level
+		\item Version
+		\item Supported features
+		\item Unit Client ID
+	\end{itemize}
+	
+	\item Aussi\footnote{\href{https://testweb.playready.microsoft.com/Doc/TestingClientInfo}{Test Client Info}}
+	\begin{itemize}
+		\item Chaîne de certificats
+		\item Platform
+		\item Type
+	\end{itemize}
+	
+	\item cf \texttt{clientInfo.txt} des tests Bitmovin pour une liste
+	\item \emph{Remarque} : toujours pas de liste exacte en ayant déchiffré la requête
+	
+	
+\end{itemize}
+
+
+\subsection{SOAP}
+
+\begin{itemize}
+	\item Protocole de base utiliser pour la communication avec le License Server
+	\item Basé sur du XML
+	\item Blocs de base :
+	\begin{itemize}
+		\item \emph{Enveloppe} : Contient les données et identifie le XML comme du SOAP
+		\item \emph{Header}
+		\item \emph{Body}
+		\item \emph{Fault message} : optionnel, code d'erreur HTTP 500
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{Chiffrement}
+
+\begin{itemize}
+	\item Lors de la LA, HTTP ou HTTPS
+	\item Protocoles\footnote{\href{https://learn.microsoft.com/en-us/playready/packaging/content-encryption}{Content Encryption}} : 
+	\begin{itemize}
+		\item Contenu : AESCTR ou AESCBC (spécifié dans le PR Header)
+		\item Signature (protocole) / Chiffrement Content Keys : ECC 
+		\item Signature (licence / transient keys / data) : AES OMAC1
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{CDMi}
+
+cf. \footnote{\href{https://download.microsoft.com/download/E/A/4/EA470677-6C3C-4AFE-8A86-A196ADFD0F78/Content Decryption Module Interface Specification.pdf}{CDMi Specification}}
+
+\begin{itemize}
+	\item Interface entre EME et DRM
+	\item Permettre l'implémentation des DRMs dans les navigateurs open-source
+\end{itemize}
+
+
+\subsection{License Store}
+\begin{itemize}
+	\item Aussi appelé Hashed Data Store (HDS)
+	\item Où les licences sont stockées
+	\item Peut être persistent ou non
+	\item Potentiellement plusieurs HDS, par exemple un par application, site...
+\end{itemize}
+
+\subsection{Licence}
+Dans une réponse de LA : 
+\begin{itemize}
+	\item Base64 puis au format Extensible Media Rights (XMR)
+	
+\end{itemize}
+
+\section{Reverse}
+
+\subsection{Test Bitmovin}
+\begin{itemize}
+	\item Test fait sur Edge
+	\item Utilisation du Key System \texttt{com.microsoft.playready}
+%	\item Dans la promesse \texttt{RequestMediaKeySystemAccess}  et \texttt{CreateMediaKeys}, présence de \texttt{distinctiveIdentifier : not-allowed}
+	\item \texttt{listernersAdded\_ : true} dans l'objet MediaKeys ??
+	\item \texttt{isTrusted} : attribut de l'évènement pour savoir si il a été initié par le navigateur ou pas
+
+Résultats :
+\begin{itemize}
+	\item cf \texttt{clientInfo.txt}
+	\item Plusieurs essais de \texttt{RequestMediaKeySystemAccess} (3 blocs)
+	\item Demande de licence avec des données chiffrées
+	\item Le contenu de la demande est chiffré en AES CBC
+	\item La clé symétrique (pour la demande) est chiffrée par ECC256, KeyName : \texttt{WMRMServer}
+	\item Licence : Base64 puis XMR
+	\item Dans \texttt{audio/videoCapabilities} : \texttt{encryptionScheme : null}
+	\item \texttt{distinctiveIdentifier : not-allowed} dans les promesses
+	\item \texttt{pssh} dans le header de LA
+\end{itemize}
+\end{itemize}
+
+\subsection{Bitmovin XMR (mieux plus bas)}
+Comparaison de licences dans plusieurs cas cf \texttt{testXMR.txt}
+\begin{itemize}
+	\item Remarque : lorsque persistant, plus de choses dans la réponse de LA
+\end{itemize}
+
+
+\subsection{License Comparison}
+Comparaison de licenses (deux vidéos différentes)
+\begin{itemize}
+	\item Même début du message
+	\item On voit les policies au début en clair
+	\item Souvent, la fin d'un champ de policies est marqué par un null byte (0x00)
+	\item Schéma général : 
+	\begin{itemize}
+		\item Segment qui annonce les données (avec un ID à la fin ?)
+		\item Données
+		\item Null Byte
+	\end{itemize}
+	\item Au début, on voit le Nonce de la license (que l'on a pu observer lors de la requête de licence)
+	\item Vers la fin, champs de 64 byte (512 bits) dépendant du client, pas chiffré (constant)
+	\begin{itemize}
+		\item Sûrement un hash de Client Info
+		\item Semble pas être le Digest / SignatureKey
+		\item Unique par origine, ne survit pas au reset.
+		\item Stable et unique par client
+		\item Idem en navigation privée (même valeur)
+		\item Différent sur des sessions du navigateur
+	\end{itemize}
+	\item A la fin, champs 128bits
+	\begin{itemize}
+		\item Signature de la license avec AES OMAC1 : vérifier l'intégrité sans reparler au serveur
+		\item Taille de 128 bits semble coller avec la block-cipher de AES OMAC1
+	\end{itemize}
+	\item Content Key (sûrement au milieu)
+	\begin{itemize}
+		\item Taille : 1024 bits
+		\item 1 chiffrement ECC ElGamal 256 : 512 bits (2 éléments de la courbe)
+		\item Il semblerait donc qu'on chiffre 2 blocs
+	\end{itemize}
+	\item Dans AES CBC, champ supplémentaire à la fin
+	\item Pistes :
+	\begin{itemize}
+		\item License Chaining : il faut réussir à mettre l'information quelque part (bound à quelque chose)
+		\item Alg ID
+		\item Rights (ie Play Right)
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{PoC Test Server Client Info}
+\begin{itemize}
+	\item Avec l'option \texttt{msg:clientinfo}, le serveur sert de reflector et renvoie le Client Certificate
+	\item Ce Client Certificate est usuellement chiffré (cf AES + ECC) lors de la License Acquisition
+	\item Idée : Faire une requête "en secret" au serveur de test pour déchiffrer le contenu de la requête
+	\item Intéressant si le contenu du Client Certificate est unique / stable (par exemple, l'Issuer Key)
+	\item Dans la spécification EME : "\emph{message MUST NOT contain Distinctive Permanent Identifier(s), even in an encrypted form. message MUST NOT contain Distinctive Identifier(s), even in an encrypted form, if the MediaKeySession object's use distinctive identifier value is false.}"\footnote{\href{https://www.w3.org/TR/encrypted-media/\#queue-message}{EME Specification}}
+	\item Test\footnote{\href{https://perso.eleves.ens-rennes.fr/people/jules.timmerman/PlayReadyPoC/}{PoC}}
+	\begin{itemize}
+		\item Aucune information stockée sur le serveur (il faudrait demander à l'utilisateur s'il souhaite participer)
+		\item Issuer Key
+		\begin{itemize}
+			\item Semble avoir de la stabilité (même résultat entre la 26/05 et 08/06)
+			\item Unicité liée au ModelNumber
+			\item ModelNumber lié à la mise à jour
+		\end{itemize}
+		\item Client Time : -2h (décalage sur GMT mais basé uniquement l'heure du PC)
+		\item Cert 0 Digest : varie quand même alors que toutes les informations sont identiques (mais stable avec reboot et refresh)
+		\item Public Signing Key : Stable sur plusieurs jour
+		\item PSK et Digest sont uniques par origin (test avec localhost et perso)
+		\item Edge : clear des données Media Foundation change les valeurs
+		\item Ne semble pas forcément être un Distinctive Identifier puisque facilement clearable / ne dépend pas forcément d'un Distinctive Permanent Identifier (puisque ça change ?). Si cf le passage sur l'individualization
+	\end{itemize}
+\end{itemize}
+
+\subsection{myCanal}
+
+\begin{itemize}
+	\item Beaucoup de configurations PlayReady (avec plein de Key System)
+	\item Utilisation de \texttt{com.microsoft.playready.recommandation.3000}
+	\item \texttt{distinctiveIdentifier : required}
+	\item \texttt{GenerateRequest}
+	\begin{itemize}
+		\item Custom Attributes : \texttt{encryptionref}
+	\end{itemize}
+	\item \texttt{Update}
+	\begin{itemize}
+		\item Multiple licenses at the same time
+	\end{itemize}
+\end{itemize}
+
+
+\subsection{Media Foundation EME Sample}
+
+Étude du code\footnote{\href{https://github.com/microsoft/media-foundation/blob/master/samples/}{MediaFoundation Git}} :
+\begin{itemize}
+	\item But : comprendre le fonctionnement du DRM PlayReady sur la machine sur un projet plus petit que Edge (pour localiser le DLL etc... avec une approche dynamique)
+	\item Étudier les mêmes requêtes que dans EME et comparer (\texttt{generateRequest}), trouver le parsing de licence
+	\item Remarque : ce ne sont que des interfaces, on peut l'utiliser avec n'importe quel CDM qui implémente le tout
+	
+	\item \texttt{IMFContentDecryptionModuleFactory}
+	\begin{itemize}
+		\item \texttt{CreateContentDecryptionModuleAccess} : basé sur EME (\texttt{keySystem} en str). Donne accès à une instance de \texttt{IMFContentDecryptionModuleAccess} 
+		\item[$\sim$] \texttt{requestMediaKeySystem}
+		\item Point de départ de tout. Créer avec la magie CoCreateInstance (cf EmeFactory qui crée une classFactory pour avoir ensuite un CDMFactory)
+	\end{itemize}
+	
+	\item \texttt{IMFContentDecryptionModuleAccess}
+	\begin{itemize}
+		\item Basé sur EME \texttt{MediaKeySystemAccess}
+		\item \texttt{CreateContentDecryptionModule} : Construit le CDM. Renvoit une instance de \texttt{IMFContentDecryptionModule} 
+		\item[$\sim$] \texttt{createMediaKeys}
+	\end{itemize}
+	
+	\item \texttt{IMFContentDecryptionModule}
+	\begin{itemize}
+		\item \texttt{CreateSession} : Renvoit une instance \texttt{IMFContentDecryptionModuleSession}
+		\item[$\sim$] \texttt{createSession}
+	\end{itemize}
+	
+	\item \texttt{IMFContentDecryptionModuleSession} $\sim$ \texttt{MediaKeySession}
+	\begin{itemize}
+		\item \texttt{onmessage} callback (\texttt{App::OnEMEKeyMessage})
+		\item \texttt{generateRequest}
+	\end{itemize}
+	
+	
+ 	\item \texttt{IMFContentProtectionManager}
+	\begin{itemize}
+		\item Implémenté par \texttt{MediaEngineProtectionManager}
+		\item \texttt{BeginEnableContent} : appelé automatiquement lorsque nécessaire pour la lecture. Dispatch ensuite au CDM
+		\item Semble ne jamais être appelé ???
+		\item Un Content Enabler spécifie le type d'action à faire
+	\end{itemize}
+	
+	\item \texttt{IMFContentEnabler}
+	\begin{itemize}
+		\item Une étape qui doit être fait pour déchiffrer, par exemple demande de licence
+	\end{itemize}
+	
+	\item DLL : \texttt{Windows.MediaProtection.PlayReady.dll} dans System32
+	\item Reverse avec Ghidra + debugger VS
+		\begin{itemize}
+			\item On utilise le .exe pour obtenir certains Data Types pour le DLL
+			\item On peut typer petit à petit les fonctions grâce à la doc
+			\item Problème : le DLL semble obfusquer et le code se construit au chargement : on dump le DLL de la mémoire avec WinDBG et on analyse plutôt ça
+			\item Problème : impossible à débugger ? Certaine fonction (qui je pense sont appelées) ne break pas + le code change en fonction de s'il y a un breakpoint ou pas (cf expérience avec \texttt{tempParseLicense} quand on met le breakpoint avant ou après \texttt{Update})
+		\end{itemize}
+	\item Ce DLL semble être lié à la documentation C\#\footnote{\href{https://learn.microsoft.com/fr-fr/uwp/api/windows.media.protection.playready}{Documentation UWP}}
+	\item Autre Sample encore plus minimaliste (pas trouvé le DLL)\footnote{\href{Universal PlayReady Sample}{https://github.com/microsoft/Windows-universal-samples/tree/main/Samples/PlayReady}}
+\end{itemize}
+
+\subsection{Only PlayReady}
+\begin{itemize}
+	\item Objectif : lire une autre vidéo (un autre stream) que celle de test de C++
+	\item Un peu difficile de travailler avec des streams DASH : on télécharge tous les segments / init et on concatène pour travailler avec un seul fichier
+	\item On doit trouver le Header PlayReady : soit dans le mpd, soit dans le fichier directement (plus de précisions\footnote{\href{https://learn.microsoft.com/en-us/playready/specifications/mpeg-dash-playready}{DASH PlayReady specification}})
+	\item Dans WinRT (C++), on utilise les fonctions UWP : \texttt{Windows.Media.Protection.PlayReady}
+	\item Avec UWP :
+	\begin{itemize}
+		\item On créer un MediaProtectionManager\footnote{\href{https://learn.microsoft.com/en-ca/uwp/api/windows.media.protection.mediaprotectionmanager?view=winrt-22621}{MediaProtectionManager}} 
+		(peu importe le DRM) où l'on donne comme propriété le bon GUID de DRM
+		\item On setup les callbacks, notamment \texttt{ServiceRequested}. 
+		\item Pour chaque DRM, les events devront être converti en spécifique\footnote{\href{https://learn.microsoft.com/en-ca/uwp/api/windows.media.protection.playready.iplayreadyservicerequest?view=winrt-22621}{PlayReady Service Events}}
+		\item Dans l'app C\#, ils connectent avec un \texttt{MediaElement} le playback
+	\end{itemize}
+\end{itemize}
+
+
+\section{Questions / Pistes / TODO}
+\begin{itemize}
+	\item[\checkmark] "Client stack" ? (cf Initialization) : sûrement juste : "maintenant ça marche"
+	\item[\checkmark] Contenu exact du Client Certificate
+	\item Problème de privacy si certificat transmis en HTTP
+	\item[\checkmark] Creuser les chiffrements possibles
+	\item Suite des clés de chiffrement
+	\item CDMi \footnote{\href{https://download.microsoft.com/download/E/A/4/EA470677-6C3C-4AFE-8A86-A196ADFD0F78/Content Decryption Module Interface Specification.pdf}{CDMi Specification}}
+	
+	\item Documentations supplémentaires\footnote{\href{https://www.microsoft.com/playready/documents/}{Documents}}
+	
+	\item [\checkmark]Réussir le test avec clientInfo et le testServer...
+	
+	\item Provisioning (récupération du Client Certficate)
+	\item[\checkmark] Plugin dans WideXtractor pour les appels EME
+	\item[\checkmark] Bitmovin pour tester les DRMs
+	
+	\item KeyName : \texttt{WMRMServer}
+	
+	
+	\item Stockage persistant des données
+	
+	\item[\checkmark] Renouvellement licence ? (pas de Message Event avec realtime sur Bitmovin (juste une erreur \texttt{MEDIA \_ERR\_DECODE} de Media Foundation), pas de policy partiulière non plus)
+	
+	\item Comparer des licences pour essayer de comprendre XMR
+	
+	\item[\checkmark] UWP PlayReady\footnote{\href{https://learn.microsoft.com/en-us/windows/uwp/audio-video-camera/playready-client-sdk}{UWP PlayReady}; \href{https://learn.microsoft.com/en-us/uwp/api/Windows.Media.Protection.PlayReady?view=winrt-22621}{API}}
+	
+	\item[\checkmark] Media Foundation (UWP avec EME sample)\footnote{\href{https://github.com/microsoft/media-foundation/blob/master/samples/}{MediaFoundation Git}}
+	
+	\item[\checkmark] Transaction ID (pour l'acknowledgement a priori) : lien avec metering
+	
+	\item Creuser persistance (cf. plus de choses dans la réponses)
+	
+	\item[\checkmark] Cookie \texttt{ARRAffinity} : lié à Azure
+	
+	\item Secure Stop / Secure Delete en profondeur
+\end{itemize}
+
+\end{document}

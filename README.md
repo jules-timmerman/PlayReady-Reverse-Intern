@@ -11,3 +11,6 @@ Here is quick description of the directories preset :
 - LicenseComparison : this site does a bunch of license requests and shows them all, helping the comprehension of the license format.
 - NotesStage : this contains the notes I have taken during my Internship. These notes are written in French. 
 - Tools : a few quick scripts I have used.
+- Rendu : my final report
+
+A few tests were done with LicenseComparison and ClientInfoPoC. The results can be found inside the folders

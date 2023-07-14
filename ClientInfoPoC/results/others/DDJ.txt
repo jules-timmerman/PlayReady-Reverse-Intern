@@ -1,0 +1,59 @@
+Client Info Reflector
+
+It is preferable to use Microsoft Edge as a browser
+
+Retrieved Media Key System Object
+Retrieved Media Keys
+Request Generated
+Signature Public Key : sIO7LSsP19Ft3X9wB7RH7hxCdugPli8rGYQHaFvDiGK16jAOMMssvjTZDt6BSj/I47X4rlJr3P1/hS/hsApoiA==
+Response from server :
+Client Info:
+
+Client Version: 10.0.16384.10011
+Client Time: 6/9/2023 9:32:43 AM
+
+Supported Features:
+
+Receiver
+AntiRollbackClock
+RevocationLists
+PlayReady3Features
+
+Device Certificate Info (Cert 0):
+
+Platform: WindowsOnX86
+Type: Device
+SecurityLevel: 2000
+RobustnessVersion: 100928512
+ManufacturerName: Microsoft
+ModelName: Windows
+ModelNumber: 6.4.12.000
+DigestValue: mT13g00Y5BR0a/15eXLRLqzapMxSue9KAdx6rAqmGBI=
+IssuerKey: 5eSNBTSdn7OL97cO/dplLxuYAWM/0nN5GnfNHHLM9XuHHxgzFtNeCL3dN4lf3ghTTm8NYq+B4aHrvOWL0DBOSA==
+
+Certificate Chain:
+
+↳ Cert: 1
+ManufacturerName: Microsoft
+ModelName: Windows
+ModelNumber: 6.4.12.000
+DigestValue: IUmW3cFMYcZySxa6d8H5Ge75S/3pS+7R7bNrPDPSCTE=
+Platform: WindowsOnX86
+
+↳ Cert: 2
+ManufacturerName: Microsoft
+ModelName: PlayReady SL2000 Device Port- Windows Lib Codebase Version CA
+ModelNumber: 1.0.0.4
+DigestValue: Y3C0kjOxz3h/njYBKeApsvfPscwLcV1qAiTfAXXSLw4=
+
+↳ Cert: 3
+ManufacturerName: Microsoft
+ModelName: PlayReady SL2000 Device Port - Windows Platform CA for x86/amd64
+ModelNumber: 1.0.0.3
+DigestValue: L62pDo9+gkd6LoLDbQwgxwtYldcuhSEog7GcJwtJ3CE=
+
+↳ Cert: 4
+ManufacturerName: Microsoft
+ModelName: PlayReady SL2000 Device Port + Link CA
+ModelNumber: 1.0.0.1
+DigestValue: 7Q8z1rSr8I3AGkcf0BNoDgwS46nO0wD5m0WvYfFoTWQ=

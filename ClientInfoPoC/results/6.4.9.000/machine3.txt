@@ -1,0 +1,55 @@
+Retrieved Media Key System Object
+Retrieved Media Keys
+Request Generated
+Signature Public Key : lu2W9uCe7ZZUy45HdRH/vMU4293smApiduw3/6Blmrr6qSoltsaHlLRi75RiObdSBI/5fHjxDQSyzaVfXkmorA==
+Response from server :
+Client Info:
+
+Client Version: 10.0.16384.10011
+Client Time: 6/14/2023 8:57:16 AM
+
+Supported Features:
+
+Receiver
+AntiRollbackClock
+RevocationLists
+PlayReady3Features
+
+Device Certificate Info (Cert 0):
+
+Platform: WindowsOnX86
+Type: Device
+SecurityLevel: 2000
+RobustnessVersion: 100927744
+ManufacturerName: Microsoft
+ModelName: Windows
+ModelNumber: 6.4.9.000
+DigestValue: I7v9z41RRDIYKmyB2yonmMgpRpGSVqg9BKXpIMNNkTo=
+IssuerKey: WYa3oqnWswYfXSAI9pfu9bzGFcvmTvlgeoNVPcA6IbbUxzPicX4crQDlIHCHZGae7l9NeLHGQjr5b69qRM/vPQ==
+
+Certificate Chain:
+
+↳ Cert: 1
+ManufacturerName: Microsoft
+ModelName: Windows
+ModelNumber: 6.4.9.000
+DigestValue: aNW2eJxsxGM2UGJKzCDACBYbCukxDGiX3OsaQRvfa3U=
+Platform: WindowsOnX86
+
+↳ Cert: 2
+ManufacturerName: Microsoft
+ModelName: PlayReady SL2000 Device Port- Windows Lib Codebase Version CA
+ModelNumber: 1.0.0.4
+DigestValue: Y3C0kjOxz3h/njYBKeApsvfPscwLcV1qAiTfAXXSLw4=
+
+↳ Cert: 3
+ManufacturerName: Microsoft
+ModelName: PlayReady SL2000 Device Port - Windows Platform CA for x86/amd64
+ModelNumber: 1.0.0.3
+DigestValue: L62pDo9+gkd6LoLDbQwgxwtYldcuhSEog7GcJwtJ3CE=
+
+↳ Cert: 4
+ManufacturerName: Microsoft
+ModelName: PlayReady SL2000 Device Port + Link CA
+ModelNumber: 1.0.0.1
+DigestValue: 7Q8z1rSr8I3AGkcf0BNoDgwS46nO0wD5m0WvYfFoTWQ=

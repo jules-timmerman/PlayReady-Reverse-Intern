@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="index.js"></script>
+    <title>License Comparison</title>
+</head>
+
+<body>
+    <h1>PlayReady License Comparison</h1>
+    <p>
+        Takes a bit of time. Ask for a few licenses to the PlayReady test server. Does 3 rounds. 
+        Results are stored in the "results" dictionary.
+    </p>
+
+    <div>
+        <input type="radio" id="preset" name="testvalues" checked><label>Hardcoded set of arguments</label>
+        <input type="radio" id="fullrandom" name="testvalues"><label>Full Random (i.e. new date each time etc...)</label>
+    </div>
+    <div>
+        <input type="radio" id="tos" name="source" checked><label>Tears of Steel</label>
+        <input type="radio" id="xbox" name="source"><label>XBox commercial</label>
+    </div>
+
+	<div>
+        <label>Number of iterations : </label><input id="nbiteration" name="nbiteration" value="2">
+    </div>
+
+    
+    <button onclick="main()">Start Acquisition</button>
+
+
+    <p id="log"></p>
+</body>
+</html>

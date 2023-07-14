@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="index.js"></script>
+    <title>Get License</title>
+</head>
+
+<body>
+    <h1>Get License from Test Server</h1>
+    
+    <div>
+        <label>License Server : </label><input id="laurl" name="laurl" value="https://test.playready.microsoft.com/service/rightsmanager.asmx">
+    </div>
+
+    <div>
+        <label>Parameters : </label><input id="params" name="params" value="persist:false,sl:150">
+    </div>
+
+    <div>
+        <input type="radio" id="tos" name="source" checked><label>Tears Of Steels</label>
+        <input type="radio" id="xbox" name="source"><label>Xbox commercial</label>
+    </div>
+
+    <div>
+        <label>Key System : </label><input id="keysystem" name="keysystem" value="com.microsoft.playready.recommendation">
+    </div>
+
+    <button onclick="main()">Get Request</button>
+
+    <p id="log">
+    
+    </p>
+</body>
+
+
+</html>

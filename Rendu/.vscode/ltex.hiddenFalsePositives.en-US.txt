@@ -1,0 +1,5 @@
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QWe can describe a typical EME workflow as follows : requestMediaKeySystemAccess : the script specify a collection of Key Systems and configurations to try.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QcreateMediaKeys : gives access to the specified CDM createSession : creates a session in the CDM.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QgenerateRequest : creates the request to be sent to the LS.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qmessage event : this event is raised whenever the CDM need to send a message to the LS.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qupdate : this method has to be called with the response from the LS to the CDM.\\E$"}

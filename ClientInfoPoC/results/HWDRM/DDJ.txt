@@ -1,0 +1,54 @@
+Client Info Reflector
+It is preferable to use Microsoft Edge as a browser on Windows 10+
+You can e-mail me the results (you can find it here)
+
+Trying with com.microsoft.playready.recommendation.3000
+Retrieved Media Key System Object
+Retrieved Media Keys
+Request Generated
+Signature Public Key : g6BDJJgph2o5nW311oe2RCRSIvSk8nnDSKiH0qrBBfviy8MiCUv6CEoq39DDqf/LI96+FBjzMK8G9YEIjuCUKw==
+Response from server :
+Client Info:
+
+Client Version: 10.0.16384.10011
+Client Time: 7/10/2023 3:17:57 PM
+
+Supported Features:
+
+Receiver
+SecureClock
+RevocationLists
+PlayReady3Features
+
+Device Certificate Info (Cert 0):
+
+Platform: WinIntel_HDRM
+Type: Device
+SecurityLevel: 3000
+RobustnessVersion: 16777217
+ManufacturerName: Microsoft for AAAAAAAAAAAAAAAAAAAAAA==
+ModelName: Intel 0 1
+ModelNumber: 1.0.0.1
+DigestValue: YlH7e1ECMsAF4RTshnP5tH9ZinF3wJZ7vpm5SYC2uqY=
+IssuerKey: 3Vt46fRAv71Ou+hGVgSay1le2qzb7rbXI8/pOVRbHmCG/5AJdHu2qjWBs2j9k+C3frlcUNDlIQUHwl9QFKSGfQ==
+
+Certificate Chain:
+
+↳ Cert: 1
+ManufacturerName: Microsoft
+ModelName: Intel
+ModelNumber: 1.0.0.1
+DigestValue: 1WCZhbjjM5TfTJkykO18CRYsEgYiyA2JTYetCNlAgRw=
+
+↳ Cert: 2
+ManufacturerName: Microsoft
+ModelName: PlayReady SL3000 Hardware-based Device CA for Intel
+ModelNumber: 1.0.0.1
+DigestValue: Yq3Ri93RXcrLo9MEOFuZSTXdu9ZsfeKkcVtE2CBtRcI=
+Platform: WinIntel_HDRM
+
+↳ Cert: 3
+ManufacturerName: Microsoft
+ModelName: PlayReady SL3000 Device Port + Link CA
+ModelNumber: 1.0.0.1
+DigestValue: bk7YOJRioSgnzjpZgLasowaL96LFIBHDx6B0z+JoDPE=

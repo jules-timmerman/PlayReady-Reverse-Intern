@@ -1,0 +1,50 @@
+01000b0000001c00010010Client Info Reflector
+It is preferable to use Microsoft Edge as a browser on Windows 10+
+You can e-mail me the results (you can find it here)
+
+Trying with com.microsoft.playready.recommendation.3000
+Retrieved Media Key System Object
+Retrieved Media Keys
+Request Generated
+Signature Public Key : x60jY9jVEIWph4Z3+Ow/7pwQRiDJuVZQSjiRJtmVqi+c0frm3QzF31lHgTFeBftZH4VzQLaa9TONew+E9w0wDg==
+Response from server :
+Client Info:
+
+Client Version: 10.0.16384.10011
+Client Time: 7/10/2023 5:35:46 PM
+
+Supported Features:
+
+RevocationLists
+PlayReady3Features
+
+Device Certificate Info (Cert 0):
+
+Platform: OEM
+Type: Device
+SecurityLevel: 3000
+RobustnessVersion: 16777216
+ManufacturerName: Nvidia Corporation
+ModelName: AD10X
+ModelNumber: AD10X
+DigestValue: dMGc6BzMMaVOWDaS03AADOzMrBffsS93dzWpB9g3fCE=
+IssuerKey: fiNb/dkIy09gdm23dxS6nFHSrbvkDmLM0ZOCLZTndoekbPR+H5a2jvAGh36bqQkfbBg5x/2PdqPw/rTr5kuIUQ==
+
+Certificate Chain:
+
+↳ Cert: 1
+ManufacturerName: Nvidia Corporation
+ModelName: AD10X
+ModelNumber: AD10X
+DigestValue: l5Ri+OkuHnaW321J23bp4/vSrxVVdb84zprsEGTsgAw=
+Platform: OEM
+
+↳ Cert: 2
+ManufacturerName: Nvidia Corporation
+DigestValue: pFOP5LRTEEOsd/knDWcNnWU0jwoLzFRd9Z0byKwXmQA=
+
+↳ Cert: 3
+ManufacturerName: Microsoft
+ModelName: PlayReady SL3000 Device Port + Link CA
+ModelNumber: 1.0.0.1
+DigestValue: bk7YOJRioSgnzjpZgLasowaL96LFIBHDx6B0z+JoDPE=
